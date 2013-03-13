@@ -98,10 +98,10 @@ class GridWindow:
         self._draw_cell(x,y)
 
   def _click(self,e):
-    if self.current_value:
-      self._set_grid_cell(e.x/self.cellx,e.y/self.celly,self.current_value)
-    else:
+    if self.current_value==None:
       print "No current value set"
+    else:
+      self._set_grid_cell(e.x/self.cellx,e.y/self.celly,self.current_value)
 
   def _zoom(self,direction):
     if(self.cellx+direction*10<10 or self.celly+direction*10<10):
