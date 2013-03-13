@@ -173,7 +173,6 @@ class GridWindow:
         self._set_grid_cell(x,y,int(line[x]))
 
 def main():
-  print "hello"
   w=GridWindow()
 
   if len(sys.argv)==2:
