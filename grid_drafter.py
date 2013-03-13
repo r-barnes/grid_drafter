@@ -140,6 +140,8 @@ class GridWindow:
     elif e.char=='S':
       self.save_grid()
       return
+    elif e.char.isdigit():
+      self.current_value=int(e.char)
     elif self.keys_to_data.has_key(e.char):
       self.current_value=self.keys_to_data[e.char]
       return
