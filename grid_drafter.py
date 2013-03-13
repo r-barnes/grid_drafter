@@ -132,19 +132,16 @@ class GridWindow:
   def _key(self,e):
     if e.keysym == 'Escape':
       self.master.destroy()
-      return
     elif e.keysym == 'minus':
       self._zoom(-1)
     elif e.keysym == 'plus':
       self._zoom(1)
     elif e.char=='S':
       self.save_grid()
-      return
     elif e.char.isdigit():
       self.current_value=int(e.char)
     elif self.keys_to_data.has_key(e.char):
       self.current_value=self.keys_to_data[e.char]
-      return
     elif self.keys_to_data.has_key(e.char.lower()):
       for x in range(self.arr.maxx+1):
         for y in range(self.arr.maxy+1):
