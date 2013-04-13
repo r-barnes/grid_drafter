@@ -155,12 +155,12 @@ class GridWindow:
     except:
       return
 
-    fout.write("ncols\t" + str(self.arr.maxx+1) + "\n")
-    fout.write("nrows\t" + str(self.arr.maxy+1) + "\n")
-    for y in range(self.arr.maxy+1):
-      for x in range(self.arr.maxx+1):
-        if self.arr.exists(x,y):
-          val,rect=self.arr.get(x,y)
+    fout.write("ncols\t" + str(self.arr.width()) + "\n")
+    fout.write("nrows\t" + str(self.arr.height()) + "\n")
+    for y in range(self.arr.height()):
+      for x in range(self.arr.width()):
+        if self.arr.get(x,y):
+          val,cell=self.arr.get(x,y)
           fout.write(str(val)+" ")
         else:
           fout.write("0 ")
@@ -179,15 +179,15 @@ class GridWindow:
       self.SaveGrid()
     elif e.char.isdigit():
       self.current_value=int(e.char)
-    elif self.keys_to_data.has_key(e.char):
-      self.current_value=self.keys_to_data[e.char]
-    elif self.keys_to_data.has_key(e.char.lower()):
-      for x in range(self.arr.maxx+1):
-        for y in range(self.arr.maxy+1):
-          if self.arr.exists(x,y):
-            val,rect=self.arr.get(x,y)
-            if val==self.keys_to_data[e.char.lower()]:
-              self._SetGridCell(x,y,0)
+#    elif self.keys_to_data.has_key(e.char):
+#      self.current_value=self.keys_to_data[e.char]
+#    elif self.keys_to_data.has_key(e.char.lower()):
+#      for x in range(self.arr.maxx+1):
+#        for y in range(self.arr.maxy+1):
+#          if self.arr.exists(x,y):
+#            val,rect=self.arr.get(x,y)
+#            if val==self.keys_to_data[e.char.lower()]:
+#              self._SetGridCell(x,y,0)
 
   def LoadFile(self,fname):
     try:
@@ -213,11 +213,11 @@ class GridWindow:
         self._SetGridCell(x,y,int(line[x]))
 
 def main():
-  parser = argparse.ArgumentParser(description='Build and manage integer grids')
+  parser = argparse.ArgumentParser(description='Build and manage integer grids. By Richard Barnes (rbarnes@umn.edu)')
   group = parser.add_mutually_exclusive_group(required=True)
   group.add_argument('-x','--hex', help='Use a hexagonal grid', action='store_true')
   group.add_argument('-s','--square', help='Use a square grid', action='store_true')
-  parser.add_argument('infile', nargs='?', default=None)
+  parser.add_argument('infile', nargs='?', help='File to read grid from', default=None)
   args = parser.parse_args()
 
   if args.hex:
