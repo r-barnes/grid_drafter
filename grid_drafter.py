@@ -4,29 +4,23 @@ import sys
 
 class array2d:
   def __init__(self):
-    self.data={}
-    self.minx=0
-    self.miny=0
-    self.maxx=0
-    self.maxy=0
+    self.data=[]
 
   def set(self, x, y, z):
-    if not self.data.has_key(y):
-      self.data[y]={}
+    if y>len(self.data):
+      self.data+=[[]]*(y-len(self.data)+1)
+    if x>len(self.data[y]):
+      self.data[y]+=[0]*(x-len(self.data[y])+1)
     self.data[y][x]=z
-    self.maxy=max(y,self.maxy)
-    self.miny=min(y,self.miny)
-    self.maxx=max(x,self.maxx)
-    self.minx=min(x,self.minx)
 
   def get(self, x, y):
-    if self.exists(x,y):
-      return self.data[y][x]
+    if y>len(self.data):
+      return 0
+    elif x>len(self.data[y]):
+      return 0
     else:
-      return None
+      return self.data[y][x]
 
-  def exists(self, x, y):
-    return (self.data.has_key(y) and self.data[y].has_key(x))
 
 class GridWindow:
   def __init__(self, keys_to_data=None, data_to_color={}, cellx=20, celly=20, grid_color="black"):
