@@ -1,6 +1,7 @@
 #!/usr/bin/python
 from Tkinter import *
 import sys
+import argparse
 
 class array2d:
   def __init__(self):
@@ -29,7 +30,7 @@ class array2d:
 
 
 class GridWindow:
-  def __init__(self, gtype="square", keys_to_data=None, data_to_color={}, cellx=20, celly=20, grid_color="black"):
+  def __init__(self, gtype="square", keys_to_data=None, data_to_color={}, grid_color="black"):
     self.master=Tk()
     self.master.wm_title("Grid Drafter")
     self.w = Canvas(self.master, width=1000, height=500)
@@ -192,7 +193,8 @@ class GridWindow:
     try:
       fin=open(fname,"r")
     except:
-      return
+      sys.stderr.write("Failed to open file '"+fname+"'!\n")
+      sys.exit(-1)
 
     y=-1
     for line in fin:
@@ -211,12 +213,24 @@ class GridWindow:
         self._SetGridCell(x,y,int(line[x]))
 
 def main():
-  w=GridWindow(gtype="hex")
+  parser = argparse.ArgumentParser(description='Build and manage integer grids')
+  group = parser.add_mutually_exclusive_group(required=True)
+  group.add_argument('-x','--hex', help='Use a hexagonal grid', action='store_true')
+  group.add_argument('-s','--square', help='Use a square grid', action='store_true')
+  parser.add_argument('infile', nargs='?', default=None)
+  args = parser.parse_args()
+
+  if args.hex:
+    gtype="hex"
+  elif args.square:
+    gtype="square"
+
+  w=GridWindow(gtype=gtype)
   w.data_to_color={0:"#F7FCFD", 1:"#E5F5F9", 2:"#CCECE6", 3:"#99D8C9", 4:"#66C2A4", 5:"#41A376", 6:"#238B45", 7:"#006D2C", 8:"#00441B"}
 #  w.data_to_color={0:"#E5F5F9",1:"#99D8C9",2:"#2CA25F"}
 
-  if len(sys.argv)==2:
-    w.LoadFile(sys.argv[1])
+  if args.infile:
+    w.LoadFile(args.infile)
 
   mainloop()
 
