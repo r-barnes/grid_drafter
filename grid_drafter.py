@@ -7,23 +7,29 @@ class array2d:
     self.data=[]
 
   def set(self, x, y, z):
-    if y>len(self.data):
+    if y>=len(self.data):
       self.data+=[[]]*(y-len(self.data)+1)
-    if x>len(self.data[y]):
+    if x>=len(self.data[y]):
       self.data[y]+=[0]*(x-len(self.data[y])+1)
     self.data[y][x]=z
 
   def get(self, x, y):
-    if y>len(self.data):
-      return 0
-    elif x>len(self.data[y]):
-      return 0
+    if y>=len(self.data):
+      return None
+    elif x>=len(self.data[y]):
+      return None
     else:
       return self.data[y][x]
 
+  def height(self):
+    return len(self.data)
+
+  def width(self):
+    return max([len(i) for i in self.data])
+
 
 class GridWindow:
-  def __init__(self, keys_to_data=None, data_to_color={}, cellx=20, celly=20, grid_color="black"):
+  def __init__(self, gtype="square", keys_to_data=None, data_to_color={}, cellx=20, celly=20, grid_color="black"):
     self.master=Tk()
     self.master.wm_title("Grid Drafter")
     self.w = Canvas(self.master, width=1000, height=500)
@@ -49,6 +55,11 @@ class GridWindow:
     self.grid_color=grid_color
     self.current_value=None
 
+    if gtype=="square":
+      self.drawer=self._DrawSquare
+    else:
+      raise Exception("Unrecognised grid type")
+
     self.DrawGrid()
 
   def _d2c(self, val):
@@ -57,39 +68,55 @@ class GridWindow:
     else:
       return "white"
 
-  def _DrawCell(self,x,y):
-    if not self.arr.exists(x,y):
+  def _DrawSquare(self, x, y, fillcolour):
+    orgx=x*self.cellx
+    orgy=y*self.celly
+    square = self.w.create_polygon(
+      orgx,            orgy,
+      orgx+self.cellx, orgy,
+      orgx+self.cellx, orgy+self.celly,
+      orgx,            orgy+self.celly,
+      orgx,            orgy,
+      outline="black", fill=fillcolour
+    )
+    return square
+
+  def _MakeCell(self,x,y):
+    if self.arr.get(x,y):
       return
-    val,rect=self.arr.get(x,y)
-    self.w.itemconfig(rect,fill=self._d2c(val))
+    cell=self.drawer(x,y,"white")
+    self.arr.set(x,y,(0,cell))
 
   def _SetGridCell(self,x,y,val):
-    if not self.arr.exists(x,y):
-      rect=self.w.create_rectangle(x*self.cellx,y*self.celly,(x+1)*self.cellx,(y+1)*self.celly,fill="white")
+    if not self.arr.get(x,y):
+      cell=self.drawer(x,y,"white")
     else:
-      oldval,rect=self.arr.get(x,y)
-    self.arr.set(x,y,(val,rect))
+      oldval,cell=self.arr.get(x,y)
+    self.arr.set(x,y,(val,cell))
     self._DrawCell(x,y)
 
   def _RefreshCell(self,x,y):
-    if not self.arr.exists(x,y):
+    if self.arr.get(x,y):
       return
-    val,rect=self.arr.get(x,y)
-    rect=self.w.create_rectangle(x*self.cellx,y*self.celly,(x+1)*self.cellx,(y+1)*self.celly,fill="white")
-    self.arr.set(x,y,(val,rect))
+    val,cell=self.arr.get(x,y)
+    cell=self.drawer(x,y,"white")
+    self.arr.set(x,y,(val,cell))
+
+  def _DrawCell(self, x, y):
+    if not self.arr.get(x,y):
+      return
+    val,cell=self.arr.get(x,y)
+    self.w.itemconfig(cell,fill=self._d2c(val))
 
   def DrawGrid(self):
     self.w.delete('*')
-    self.w.create_rectangle(0,0,self.w.winfo_reqwidth(),self.w.winfo_reqheight(),fill="white")
-    for x in range(0,self.w.winfo_reqwidth(),self.cellx):
-      self.w.create_line(x,0,x,self.w.winfo_reqheight())
-    for y in range(0,self.w.winfo_reqheight(),self.celly):
-      self.w.create_line(0,y,self.w.winfo_reqwidth(),y)
+    for x in range(0,int(self.w.winfo_reqwidth()/self.cellx)+1):
+      for y in range(0,int(self.w.winfo_reqheight()/self.celly)+1):
+        self._MakeCell(x,y)
 
-    for x in range(self.arr.maxx+1):
-      for y in range(self.arr.maxy+1):
+    for x in range(self.arr.width()):
+      for y in range(self.arr.height()):
         self._RefreshCell(x,y)
-        self._DrawCell(x,y)
 
   def _Click(self,e):
     if self.current_value==None:
