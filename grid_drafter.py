@@ -174,6 +174,8 @@ class GridWindow:
 
 def main():
   w=GridWindow()
+  w.data_to_color={0:"#F7FCFD", 1:"#E5F5F9", 2:"#CCECE6", 3:"#99D8C9", 4:"#66C2A4", 5:"#41A376", 6:"#238B45", 7:"#006D2C", 8:"#00441B"}
+  w.data_to_color={0:"#E5F5F9",1:"#99D8C9",2:"#2CA25F"}
 
   if len(sys.argv)==2:
     w.loadfile(sys.argv[1])
