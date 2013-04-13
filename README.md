@@ -12,3 +12,5 @@ Pressing keys 0-8 will then allow you to fill the grid cells in with a colour wh
 Pressing "S" will save the grid file in a format which can be read back in by the program for further editing. The colours drawn previously will be saved as integer numbers.
 
 I use this program for creating and editing small digital elevation models for testing with hydrologic algorithms.
+
+![Screenshot](screenshot.png)
