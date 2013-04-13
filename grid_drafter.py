@@ -58,6 +58,8 @@ class GridWindow:
 
     if gtype=="square":
       self.drawer=self._DrawSquare
+    elif gtype=="hex":
+      self.drawer=self._DrawHex
     else:
       raise Exception("Unrecognised grid type")
 
@@ -69,10 +71,28 @@ class GridWindow:
     else:
       return "white"
 
+  def _DrawHex(self, x, y, fillcolour):
+    oneseg = self.cellx/4
+    twoseg = oneseg*2  # same as cellx/2
+    orgy=y*self.cellx+(x%2)*self.cellx/2
+    orgx=x*self.cellx*3/4.
+
+    # Create a new one
+    cell = self.w.create_polygon( 
+    orgx,                   orgy + twoseg,
+    orgx + oneseg,          orgy,
+    orgx + oneseg + twoseg, orgy,
+    orgx + self.cellx ,     orgy + twoseg,
+    orgx + oneseg + twoseg, orgy + self.cellx,
+    orgx + oneseg,          orgy + self.cellx,
+    orgx,                   orgy + twoseg,
+    outline="black",fill=fillcolour)
+    return cell
+
   def _DrawSquare(self, x, y, fillcolour):
     orgx=x*self.cellx
     orgy=y*self.celly
-    square = self.w.create_polygon(
+    cell = self.w.create_polygon(
       orgx,            orgy,
       orgx+self.cellx, orgy,
       orgx+self.cellx, orgy+self.celly,
@@ -80,7 +100,7 @@ class GridWindow:
       orgx,            orgy,
       outline="black", fill=fillcolour
     )
-    return square
+    return cell
 
   def _MakeCell(self,x,y):
     if self.arr.get(x,y):
@@ -191,7 +211,7 @@ class GridWindow:
         self._SetGridCell(x,y,int(line[x]))
 
 def main():
-  w=GridWindow()
+  w=GridWindow(gtype="hex")
   w.data_to_color={0:"#F7FCFD", 1:"#E5F5F9", 2:"#CCECE6", 3:"#99D8C9", 4:"#66C2A4", 5:"#41A376", 6:"#238B45", 7:"#006D2C", 8:"#00441B"}
   w.data_to_color={0:"#E5F5F9",1:"#99D8C9",2:"#2CA25F"}
 
