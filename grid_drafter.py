@@ -83,9 +83,12 @@ class GridWindow:
 
   def _MakeCell(self,x,y):
     if self.arr.get(x,y):
-      return
-    cell=self.drawer(x,y,"white")
-    self.arr.set(x,y,(0,cell))
+      val,cell=self.arr.get(x,y)
+      cell=self.drawer(x,y,self._d2c(val))
+    else:
+      val=0
+      cell=self.drawer(x,y,"white")
+    self.arr.set(x,y,(val,cell))
 
   def _SetGridCell(self,x,y,val):
     if not self.arr.get(x,y):
@@ -94,13 +97,6 @@ class GridWindow:
       oldval,cell=self.arr.get(x,y)
     self.arr.set(x,y,(val,cell))
     self._DrawCell(x,y)
-
-  def _RefreshCell(self,x,y):
-    if self.arr.get(x,y):
-      return
-    val,cell=self.arr.get(x,y)
-    cell=self.drawer(x,y,"white")
-    self.arr.set(x,y,(val,cell))
 
   def _DrawCell(self, x, y):
     if not self.arr.get(x,y):
@@ -113,10 +109,6 @@ class GridWindow:
     for x in range(0,int(self.w.winfo_reqwidth()/self.cellx)+1):
       for y in range(0,int(self.w.winfo_reqheight()/self.celly)+1):
         self._MakeCell(x,y)
-
-    for x in range(self.arr.width()):
-      for y in range(self.arr.height()):
-        self._RefreshCell(x,y)
 
   def _Click(self,e):
     if self.current_value==None:
