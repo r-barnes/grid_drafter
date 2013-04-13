@@ -34,6 +34,7 @@ class GridWindow:
     self.master.wm_title("Grid Drafter")
     self.w = Canvas(self.master, width=1000, height=500)
     self.arr=array2d()
+    self.obj_tags={}
     self.w.pack()
 
     self.w.bind("<ButtonPress-1>", lambda event: self._Click(event))
@@ -88,6 +89,8 @@ class GridWindow:
     else:
       val=0
       cell=self.drawer(x,y,"white")
+    self.w.tag_bind(cell, '<ButtonPress-1>', self._Click)
+    self.obj_tags[cell]=(x,y)
     self.arr.set(x,y,(val,cell))
 
   def _SetGridCell(self,x,y,val):
@@ -111,10 +114,12 @@ class GridWindow:
         self._MakeCell(x,y)
 
   def _Click(self,e):
+    closest_object=e.widget.find_closest(e.x, e.y)[0]
+    x,y=self.obj_tags[closest_object]
     if self.current_value==None:
       print "No current value set"
     else:
-      self._SetGridCell(e.x/self.cellx,e.y/self.celly,self.current_value)
+      self._SetGridCell(x,y,self.current_value)
 
   def _Zoom(self,direction):
     if(self.cellx+direction*10<10 or self.celly+direction*10<10):
