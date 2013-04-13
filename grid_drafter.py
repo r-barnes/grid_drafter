@@ -36,9 +36,9 @@ class GridWindow:
     self.arr=array2d()
     self.w.pack()
 
-    self.w.bind("<ButtonPress-1>", lambda event: self._click(event))
-    self.w.bind("<B1-Motion>", lambda event: self._click(event))
-    self.w.bind_all('<Key>', lambda event: self._key(event))
+    self.w.bind("<ButtonPress-1>", lambda event: self._Click(event))
+    self.w.bind("<B1-Motion>", lambda event: self._Click(event))
+    self.w.bind_all('<Key>', lambda event: self._Key(event))
 
     if not keys_to_data:
       self.keys_to_data={"r":4,"l":3,"g":2,"w":0,"b":1}
@@ -55,7 +55,7 @@ class GridWindow:
     self.grid_color=grid_color
     self.current_value=None
 
-    self.draw_grid()
+    self.DrawGrid()
 
   def _d2c(self, val):
     if self.data_to_color.has_key(val):
@@ -63,28 +63,28 @@ class GridWindow:
     else:
       return "white"
 
-  def _draw_cell(self,x,y):
+  def _DrawCell(self,x,y):
     if not self.arr.exists(x,y):
       return
     val,rect=self.arr.get(x,y)
     self.w.itemconfig(rect,fill=self._d2c(val))
 
-  def _set_grid_cell(self,x,y,val):
+  def _SetGridCell(self,x,y,val):
     if not self.arr.exists(x,y):
       rect=self.w.create_rectangle(x*self.cellx,y*self.celly,(x+1)*self.cellx,(y+1)*self.celly,fill="white")
     else:
       oldval,rect=self.arr.get(x,y)
     self.arr.set(x,y,(val,rect))
-    self._draw_cell(x,y)
+    self._DrawCell(x,y)
 
-  def _refresh_cell(self,x,y):
+  def _RefreshCell(self,x,y):
     if not self.arr.exists(x,y):
       return
     val,rect=self.arr.get(x,y)
     rect=self.w.create_rectangle(x*self.cellx,y*self.celly,(x+1)*self.cellx,(y+1)*self.celly,fill="white")
     self.arr.set(x,y,(val,rect))
 
-  def draw_grid(self):
+  def DrawGrid(self):
     self.w.delete('*')
     self.w.create_rectangle(0,0,self.w.winfo_reqwidth(),self.w.winfo_reqheight(),fill="white")
     for x in range(0,self.w.winfo_reqwidth(),self.cellx):
@@ -94,23 +94,23 @@ class GridWindow:
 
     for x in range(self.arr.maxx+1):
       for y in range(self.arr.maxy+1):
-        self._refresh_cell(x,y)
-        self._draw_cell(x,y)
+        self._RefreshCell(x,y)
+        self._DrawCell(x,y)
 
-  def _click(self,e):
+  def _Click(self,e):
     if self.current_value==None:
       print "No current value set"
     else:
-      self._set_grid_cell(e.x/self.cellx,e.y/self.celly,self.current_value)
+      self._SetGridCell(e.x/self.cellx,e.y/self.celly,self.current_value)
 
-  def _zoom(self,direction):
+  def _Zoom(self,direction):
     if(self.cellx+direction*10<10 or self.celly+direction*10<10):
       return
     self.cellx+=direction*10
     self.celly+=direction*10
-    self.draw_grid()
+    self.DrawGrid()
 
-  def save_grid(self,filename="gout"):
+  def SaveGrid(self,filename="gout"):
     try:
       fout=open(filename,"w")
     except:
@@ -129,15 +129,15 @@ class GridWindow:
 
     fout.close()
 
-  def _key(self,e):
+  def _Key(self,e):
     if e.keysym == 'Escape':
       self.master.destroy()
     elif e.keysym == 'minus':
-      self._zoom(-1)
+      self._Zoom(-1)
     elif e.keysym == 'plus':
-      self._zoom(1)
+      self._Zoom(1)
     elif e.char=='S':
-      self.save_grid()
+      self.SaveGrid()
     elif e.char.isdigit():
       self.current_value=int(e.char)
     elif self.keys_to_data.has_key(e.char):
@@ -148,9 +148,9 @@ class GridWindow:
           if self.arr.exists(x,y):
             val,rect=self.arr.get(x,y)
             if val==self.keys_to_data[e.char.lower()]:
-              self._set_grid_cell(x,y,0)
+              self._SetGridCell(x,y,0)
 
-  def loadfile(self,fname):
+  def LoadFile(self,fname):
     try:
       fin=open(fname,"r")
     except:
@@ -170,7 +170,7 @@ class GridWindow:
       y+=1
       line=line.split()
       for x in range(len(line)):
-        self._set_grid_cell(x,y,int(line[x]))
+        self._SetGridCell(x,y,int(line[x]))
 
 def main():
   w=GridWindow()
@@ -178,7 +178,7 @@ def main():
   w.data_to_color={0:"#E5F5F9",1:"#99D8C9",2:"#2CA25F"}
 
   if len(sys.argv)==2:
-    w.loadfile(sys.argv[1])
+    w.LoadFile(sys.argv[1])
 
   mainloop()
 
