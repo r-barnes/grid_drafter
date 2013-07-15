@@ -14,3 +14,7 @@ Pressing "S" will save the grid file in a format which can be read back in by th
 I use this program for creating and editing small digital elevation models for testing with hydrologic algorithms.
 
 ![Screenshot](screenshot.png)
+
+TODO
+----
+1. Saving only the minimum bounding box will effect the hexagonal offsets
