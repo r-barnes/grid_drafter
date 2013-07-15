@@ -28,6 +28,20 @@ class array2d:
   def width(self):
     return max([len(i) for i in self.data])
 
+  def minbounds(self): #top right bottom left
+    btop=999999999
+    bbottom=0
+    bright=0
+    bleft=9999999999
+    for x in range(self.width()):
+      for y in range(self.height()):
+        if self.get(x,y)[0]!=0:
+          btop=min(y,btop)
+          bbottom=max(y,bbottom)
+          bright=max(x,bright)
+          bleft=min(x,bleft)
+    return [btop,bright,bbottom,bleft]
+
 
 class GridWindow:
   def __init__(self, gtype="square", keys_to_data=None, data_to_color={}, grid_color="black"):
@@ -155,10 +169,12 @@ class GridWindow:
     except:
       return
 
-    fout.write("ncols\t" + str(self.arr.width()) + "\n")
-    fout.write("nrows\t" + str(self.arr.height()) + "\n")
-    for y in range(self.arr.height()):
-      for x in range(self.arr.width()):
+    bounds=self.arr.minbounds()
+    print bounds
+    fout.write("ncols\t" + str(bounds[1]-bounds[3]+1) + "\n")
+    fout.write("nrows\t" + str(bounds[2]-bounds[0]+1) + "\n")
+    for y in range(bounds[0],bounds[2]+1):
+      for x in range(bounds[3],bounds[1]+1):
         if self.arr.get(x,y):
           val,cell=self.arr.get(x,y)
           fout.write(str(val)+" ")
