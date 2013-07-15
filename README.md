@@ -16,5 +16,5 @@ I use this program for creating and editing small digital elevation models for t
 ![Screenshot](screenshot.png)
 
 TODO
-----
+====
 1. Saving only the minimum bounding box will effect the hexagonal offsets
